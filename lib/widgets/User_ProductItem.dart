@@ -31,7 +31,15 @@ class UserProductItem extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {
-              Provider.of<Products>(context, listen: false).deleteProduct(iD);
+              Provider.of<Products>(context, listen: false)
+                  .deleteProduct(iD)
+                  .then((value) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Product Deleted'),
+                  ),
+                );
+              });
             },
             icon: const Icon(
               Icons.delete,
