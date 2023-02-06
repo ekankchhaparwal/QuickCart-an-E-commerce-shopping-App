@@ -21,36 +21,39 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => Auth(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Products(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Cart(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Orders(),
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-            primarySwatch: Colors.pink,
-            accentColor: Colors.deepOrange,
-            fontFamily: 'Lato'),
-        home: AuthScreen(),
-        routes: {
-          ProductDetailScreen.namedRoute: (ctx) => ProductDetailScreen(),
-          CartScreen.routeName: (ctx) => CartScreen(),
-          MyFinalOrders.routeNamed: (context) => MyFinalOrders(),
-          UserProductScreen.routeName: (context) => UserProductScreen(),
-          EditProductScreen.routeName: (context) => EditProductScreen(),
-        },
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => Auth(),
+          ),
+          ChangeNotifierProxyProvider<Auth, Products>(
+            create: (context)=> Products("",[]),
+            update: (context, auth,  previous) => Products(auth.Token.toString(),previous==null? []:previous.item),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => Cart(),
+          ),
+          ChangeNotifierProxyProvider<Auth,Orders>(
+            create: (context) => Orders("",[]),
+           update: (context, auth,  previous) => Orders(auth.Token.toString(),previous==null? []:previous.orders),
+          ),
+        ],
+        child: Consumer<Auth>(
+          builder: (ctx, auth, _) => MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: ThemeData(
+                primarySwatch: Colors.pink,
+                accentColor: Colors.deepOrange,
+                fontFamily: 'Lato'),
+            home: auth.isAuth ? ProductOverviewScreen() : AuthScreen(),
+            routes: {
+              ProductDetailScreen.namedRoute: (ctx) => ProductDetailScreen(),
+              CartScreen.routeName: (ctx) => CartScreen(),
+              MyFinalOrders.routeNamed: (context) => MyFinalOrders(),
+              UserProductScreen.routeName: (context) => UserProductScreen(),
+              EditProductScreen.routeName: (context) => EditProductScreen(),
+            },
+          ),
+        ));
   }
 }

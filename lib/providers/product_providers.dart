@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'product.dart';
 import 'dart:convert';
 
 class Products with ChangeNotifier {
+  final String _token;
+  Products(this._token, this._items);
   List<Product> _items = [];
 
   List<Product> get item {
@@ -19,10 +23,14 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndStoreProducts() async {
+    print('hello');
+    print(_token);
+    print('hello');
     var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products.json');
+        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products.json',{'auth' : _token});
     try {
-      final response = await http.get(url);
+      final response = await http
+          .get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodct) {
@@ -38,13 +46,14 @@ class Products with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
+      print('ffdfdf');
       rethrow;
     }
   }
 
   Future<void> addProducts(Product product) async {
     var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products.json');
+        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products.json',{'auth' : _token});
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -70,7 +79,7 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product product) async {
     final indexId = _items.indexWhere((element) => element.id == id);
     var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products/$id.json');
+        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products/$id.json',{'auth' : _token});
     await http.patch(url,
         body: json.encode({
           'title': product.title,
@@ -85,13 +94,12 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteProduct(String id) async{
+  Future<void> deleteProduct(String id) async {
     var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products/$id.json');
+        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products/$id.json',{'auth' : _token});
     http.delete(url).then((value) {
       _items.removeWhere((element) => element.id == id);
       notifyListeners();
-      
     });
   }
 }

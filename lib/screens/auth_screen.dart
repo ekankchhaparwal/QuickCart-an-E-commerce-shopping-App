@@ -138,11 +138,11 @@ class _AuthCardState extends State<AuthCard> {
         errorMessage = "This password is too Weak";
       } else if (error.toString().contains('INVALID_PASSWORD')) {
         errorMessage = "This passsword is invalid";
-      }
+      } 
       _showErrorDialog(errorMessage);
-    } catch (error) {
+    }
+     catch (error) {
       var errorMessage = "Authentication Unsucessful! Try Again";
-      print('hello');
       _showErrorDialog(errorMessage);
     }
     setState(() {
