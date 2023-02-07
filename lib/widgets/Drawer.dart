@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../screens/user_productscreen.dart';
 import '../screens/Orders_Screen.dart';
+import '../providers/auth_user.dart';
 
 class DrawerScreen extends StatelessWidget {
   @override
@@ -34,6 +36,15 @@ class DrawerScreen extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(UserProductScreen.routeName);
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Log out'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Provider.of<Auth>(context,listen: false).logOut();
             },
           ),
         ],

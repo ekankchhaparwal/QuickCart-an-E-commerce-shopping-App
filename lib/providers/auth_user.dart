@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:async';
 import '../models/http_exception.dart';
 import 'package:http/http.dart' as http;
 
@@ -7,6 +9,8 @@ class Auth with ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
   String? _userId;
+  Timer? _expiryTime;
+  bool showSnackBar = false;
   bool get isAuth {
     return Token != null;
   }
@@ -18,6 +22,10 @@ class Auth with ChangeNotifier {
       return _token;
     }
     return null;
+  }
+
+  String get userId {
+    return _userId.toString();
   }
 
   Future<void> signup(String email, String password) async {
@@ -38,6 +46,7 @@ class Auth with ChangeNotifier {
       _userId = responseData['localId'];
       _expiryDate = DateTime.now()
           .add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      _autoLogout();
       notifyListeners();
     } catch (error) {
       rethrow;
@@ -61,10 +70,36 @@ class Auth with ChangeNotifier {
       _token = responseData['idToken'];
       _userId = responseData['localId'];
       _expiryDate = DateTime.now()
-          .add(Duration(seconds: int.parse(responseData['expiresIn']) ));
+          .add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      _autoLogout();
+
       notifyListeners();
     } catch (error) {
       rethrow;
     }
+  }
+
+  void logOut() {
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    if (_expiryTime != null) {
+      _expiryTime!.cancel();
+      _expiryTime = null;
+    }
+    showSnackBar = true;
+    notifyListeners();
+  }
+
+  void changeBoolean() {
+    showSnackBar = !showSnackBar;
+  }
+
+  void _autoLogout() {
+    if (_expiryTime != null) {
+      _expiryTime!.cancel();
+    }
+    final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
+    _expiryTime = Timer(Duration(seconds: timeToExpiry), logOut);
   }
 }

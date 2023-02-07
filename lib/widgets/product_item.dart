@@ -23,7 +23,7 @@ class ProductItem extends StatelessWidget {
                 color: Colors.pink,
               ),
               onPressed: () {
-                product.toggleFavourite(auth.Token.toString());
+                product.toggleFavourite(auth.Token.toString(),auth.userId);
               },
             ),
           ),

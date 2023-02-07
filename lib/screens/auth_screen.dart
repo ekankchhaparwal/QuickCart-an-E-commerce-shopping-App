@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:provider/provider.dart';
 import '../providers/auth_user.dart';
@@ -6,13 +7,39 @@ import '../models/http_exception.dart';
 
 enum AuthMode { Signup, Login }
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   static const routeName = '/auth';
+
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void _showSnackBar(BuildContext context) {
+    if (Provider.of<Auth>(context).showSnackBar) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Session Timed-Out ,Try Logging In Again !'),
+          elevation: 5,
+          dismissDirection: DismissDirection.down,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      );
+      Provider.of<Auth>(context).changeBoolean();
+    }
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           Container(
@@ -86,6 +113,7 @@ class AuthCard extends StatefulWidget {
 
 class _AuthCardState extends State<AuthCard> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+
   AuthMode _authMode = AuthMode.Login;
   Map<String, String> _authData = {
     'email': '',
@@ -95,7 +123,6 @@ class _AuthCardState extends State<AuthCard> {
   final _passwordController = TextEditingController();
 
   void _showErrorDialog(String message) {
-    
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -138,10 +165,9 @@ class _AuthCardState extends State<AuthCard> {
         errorMessage = "This password is too Weak";
       } else if (error.toString().contains('INVALID_PASSWORD')) {
         errorMessage = "This passsword is invalid";
-      } 
+      }
       _showErrorDialog(errorMessage);
-    }
-     catch (error) {
+    } catch (error) {
       var errorMessage = "Authentication Unsucessful! Try Again";
       _showErrorDialog(errorMessage);
     }

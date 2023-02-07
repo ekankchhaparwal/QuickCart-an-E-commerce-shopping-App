@@ -7,7 +7,8 @@ import 'dart:convert';
 
 class Products with ChangeNotifier {
   final String _token;
-  Products(this._token, this._items);
+  final String userId;
+  Products(this._token, this.userId, this._items);
   List<Product> _items = [];
 
   List<Product> get item {
@@ -22,25 +23,41 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  Future<void> fetchAndStoreProducts() async {
-    print('hello');
-    print(_token);
-    print('hello');
+  Future<void> fetchAndStoreProducts([bool filter = false]) async {
+    final filterString = filter ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+
     var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products.json',{'auth' : _token});
+        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products.json', {
+      'auth': _token,
+      'orderBy': "\"creatorId\"",
+      'equalTo': "\"$userId\"",
+    });
+    var url2 = Uri.https('shopping-app-a43f2-default-rtdb.firebaseio.com',
+        '/products.json', {'auth': _token});
+    url = filter ? url : url2;
     try {
-      final response = await http
-          .get(url);
+      final response = await http.get(url);
+
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      print('hello');
+      print(extractedData);
+      print('hello');
+      url = Uri.https(
+        'shopping-app-a43f2-default-rtdb.firebaseio.com',
+        '/userFavourites/$userId.json',
+        {'auth': _token},
+      );
+      final favRespone = await http.get(url);
+      final favData = json.decode(favRespone.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodct) {
         loadedProducts.add(Product(
           id: prodId,
           title: prodct['title'],
           description: prodct['description'],
-          price: prodct['price'],
+          price: double.parse(prodct['price'].toString()),
           imageUrl: prodct['imageUrl'],
-          isFavourite: prodct['isFavourite'],
+          isFavourite: favData == null ? false : favData[prodId] ?? false,
         ));
       });
       _items = loadedProducts;
@@ -52,8 +69,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProducts(Product product) async {
-    var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products.json',{'auth' : _token});
+    var url = Uri.https('shopping-app-a43f2-default-rtdb.firebaseio.com',
+        '/products.json', {'auth': _token});
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -61,7 +78,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'price': product.price,
             'imageUrl': product.imageUrl,
-            'isFavourite': product.isFavourite,
+            'creatorId': userId,
           }));
       final newProduct = Product(
           id: json.decode(response.body)['name'],
@@ -78,8 +95,8 @@ class Products with ChangeNotifier {
 
   Future<void> updateProduct(String id, Product product) async {
     final indexId = _items.indexWhere((element) => element.id == id);
-    var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products/$id.json',{'auth' : _token});
+    var url = Uri.https('shopping-app-a43f2-default-rtdb.firebaseio.com',
+        '/products/$id.json', {'auth': _token});
     await http.patch(url,
         body: json.encode({
           'title': product.title,
@@ -95,8 +112,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    var url = Uri.https(
-        'shopping-app-a43f2-default-rtdb.firebaseio.com', '/products/$id.json',{'auth' : _token});
+    var url = Uri.https('shopping-app-a43f2-default-rtdb.firebaseio.com',
+        '/products/$id.json', {'auth': _token});
     http.delete(url).then((value) {
       _items.removeWhere((element) => element.id == id);
       notifyListeners();
