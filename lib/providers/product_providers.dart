@@ -39,9 +39,6 @@ class Products with ChangeNotifier {
       final response = await http.get(url);
 
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      print('hello');
-      print(extractedData);
-      print('hello');
       url = Uri.https(
         'shopping-app-a43f2-default-rtdb.firebaseio.com',
         '/userFavourites/$userId.json',

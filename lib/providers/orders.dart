@@ -18,7 +18,7 @@ class OrderItem {
 class Orders with ChangeNotifier {
   final String _token;
   final String userId;
-  Orders(this._token,this.userId, this._orders);
+  Orders(this._token, this.userId, this._orders);
   List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
@@ -29,11 +29,11 @@ class Orders with ChangeNotifier {
     var url = Uri.https('shopping-app-a43f2-default-rtdb.firebaseio.com',
         '/orders/$userId.json', {'auth': _token});
     final respone = await http.get(url);
-    final List<OrderItem> loadedOrders = [];
-    final extractedData = json.decode(respone.body) as Map<String, dynamic>;
-    if (extractedData == null) {
+    if (respone.body.length == 0) {
       return;
     }
+    final List<OrderItem> loadedOrders = [];
+    final extractedData = json.decode(respone.body) as Map<String, dynamic>;
 
     extractedData.forEach((OrderID, Data) {
       loadedOrders.add(OrderItem(

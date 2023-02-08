@@ -15,31 +15,12 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  void _showSnackBar(BuildContext context) {
-    if (Provider.of<Auth>(context).showSnackBar) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Session Timed-Out ,Try Logging In Again !'),
-          elevation: 5,
-          dismissDirection: DismissDirection.down,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-      );
-      Provider.of<Auth>(context).changeBoolean();
-    }
-  }
-
-  
 
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
-      key: _scaffoldKey,
+      
       body: Stack(
         children: <Widget>[
           Container(
