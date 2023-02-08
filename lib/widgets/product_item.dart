@@ -23,7 +23,7 @@ class ProductItem extends StatelessWidget {
                 color: Colors.pink,
               ),
               onPressed: () {
-                product.toggleFavourite(auth.Token.toString(),auth.userId);
+                product.toggleFavourite(auth.Token.toString(), auth.userId);
               },
             ),
           ),
@@ -56,17 +56,17 @@ class ProductItem extends StatelessWidget {
           ),
         ),
         child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pushNamed(
-              ProductDetailScreen.namedRoute,
-              arguments: product.id,
-            );
-          },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
-          ),
-        ),
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                ProductDetailScreen.namedRoute,
+                arguments: product.id,
+              );
+            },
+            child: FadeInImage(
+              placeholder: const AssetImage('images/productImage.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),),
       ),
     );
   }
