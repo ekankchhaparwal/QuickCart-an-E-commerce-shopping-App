@@ -8,19 +8,19 @@ This is a README file for an E-commerce Flutter application developed using the 
 ## Features
 The E-commerce Flutter application offers the following features:
 
-### User Authentication: 
+#### User Authentication: 
 Users can create an account, log in, and log out securely. This feature ensures that only authenticated users can access certain parts of the application, such as managing their cart or placing orders or creating/deleting/updating  the details of their own products.
 
-### Cart Management: 
+#### Cart Management: 
 Users can add products to their cart, view the items in the cart, update quantities, and remove items. The cart provides a seamless shopping experience, allowing users to keep track of the products they intend to purchase.
 
-### Order Management: 
+#### Order Management: 
 Users can place orders for the products in their cart. Once an order is placed, it is processed and stored in the Firebase real-time database. Users can view their order history and track the status of their orders.
 
-### Favorites Curation: 
+#### Favorites Curation: 
 Users can mark products as favorites, allowing them to easily access and revisit products of interest. 
 
-### Automatic Login:
+#### Automatic Login:
 If a user has previously logged in and the session is still valid, the application automatically logs in the user upon launching the app.
 
 ## Technologies Used
