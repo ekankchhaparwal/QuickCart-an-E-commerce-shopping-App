@@ -27,11 +27,11 @@ If a user has previously logged in and the session is still valid, the applicati
 The E-commerce Flutter application utilizes the following technologies and packages:
 
 
-### Provider: 
+#### Provider: 
 A package for state management in Flutter that allows efficient and scalable management of application state across widgets.
 
-### Firebase Real-time Database: 
+#### Firebase Real-time Database: 
 A cloud-hosted NoSQL database provided by Firebase, which enables real-time synchronization and data persistence for applications.
 
-### Shared Preferences : 
+#### Shared Preferences : 
 Used to store small cache data in offline mode inside the APP
